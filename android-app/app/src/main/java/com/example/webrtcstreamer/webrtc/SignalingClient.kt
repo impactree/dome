@@ -124,6 +124,8 @@ class SignalingClient(
     private fun registerAsStreamer() {
         val message = JsonObject().apply {
             addProperty("type", "register-streamer")
+            // Use a fixed ID so the embed URL doesn't change
+            addProperty("streamId", "dome-camera")
         }
         send(message.toString())
     }

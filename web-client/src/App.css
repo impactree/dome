@@ -61,7 +61,24 @@
     font-size: 1.4rem;
   }
   
-  .App-main {
     padding: 1rem;
   }
+}
+
+/* Embed Mode Styles */
+.App.embed-mode {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: black;
+}
+
+.App.embed-mode .App-main {
+  padding: 0;
+  margin: 0;
+  max-width: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

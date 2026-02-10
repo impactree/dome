@@ -3,7 +3,7 @@ import './StreamViewer.css';
 
 const SIGNALING_SERVER = 'ws://20.244.29.48:3000';
 
-const StreamViewer = ({ streamId }) => {
+const StreamViewer = ({ streamId, isEmbed }) => {
   const videoRef = useRef(null);
   const wsRef = useRef(null);
   const pcRef = useRef(null);
@@ -219,8 +219,8 @@ const StreamViewer = ({ streamId }) => {
   };
 
   const getEmbedCode = () => {
-    const url = `${window.location.origin}?streamId=${streamId}`;
-    return `<iframe src="${url}" width="640" height="480" frameborder="0" allowfullscreen></iframe>`;
+    const url = `${window.location.origin}?streamId=${streamId}&embed=true`;
+    return `<iframe src="${url}" width="640" height="480" frameborder="0" allow="autoplay; camera; microphone" allowfullscreen></iframe>`;
   };
 
   const copyEmbedCode = () => {
@@ -243,13 +243,14 @@ const StreamViewer = ({ streamId }) => {
   };
 
   return (
-    <div className="stream-viewer">
+    <div className={`stream-viewer ${isEmbed ? 'embed-view' : ''}`}>
       <div className="video-container">
         <video
           ref={videoRef}
           playsInline
           controls
           className="video-player"
+          style={isEmbed ? { width: '100%', height: '100vh', objectFit: 'contain' } : {}}
         />
         {needsManualPlay && (
           <button
@@ -260,46 +261,50 @@ const StreamViewer = ({ streamId }) => {
             ▶️ Click to Play
           </button>
         )}
-        <div className={`status-badge ${status.replace(' ', '-')}`}>
-          {status}
-        </div>
+        {!isEmbed && (
+          <div className={`status-badge ${status.replace(' ', '-')}`}>
+            {status}
+          </div>
+        )}
       </div>
 
-      {error && (
+      {error && !isEmbed && (
         <div className="error-message">
           ⚠️ {error}
         </div>
       )}
 
-      <div className="stream-info">
-        <h2>Stream Information</h2>
-        <div className="info-grid">
-          <div className="info-item">
-            <span className="label">Stream ID:</span>
-            <span className="value">{streamId}</span>
+      {!isEmbed && (
+        <div className="stream-info">
+          <h2>Stream Information</h2>
+          <div className="info-grid">
+            <div className="info-item">
+              <span className="label">Stream ID:</span>
+              <span className="value">{streamId}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">Status:</span>
+              <span className="value">{status}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">Your Client ID:</span>
+              <span className="value">{clientId || 'Not connected'}</span>
+            </div>
           </div>
-          <div className="info-item">
-            <span className="label">Status:</span>
-            <span className="value">{status}</span>
-          </div>
-          <div className="info-item">
-            <span className="label">Your Client ID:</span>
-            <span className="value">{clientId || 'Not connected'}</span>
-          </div>
-        </div>
 
-        <div className="embed-section">
-          <h3>Embed this stream</h3>
-          <textarea
-            className="embed-code"
-            value={getEmbedCode()}
-            readOnly
-          />
-          <button onClick={copyEmbedCode} className="copy-button">
-            📋 Copy Embed Code
-          </button>
+          <div className="embed-section">
+            <h3>Embed this stream</h3>
+            <textarea
+              className="embed-code"
+              value={getEmbedCode()}
+              readOnly
+            />
+            <button onClick={copyEmbedCode} className="copy-button">
+              📋 Copy Embed Code
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

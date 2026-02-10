@@ -11,7 +11,7 @@ function App() {
     // Check URL parameters for direct stream access
     const params = new URLSearchParams(window.location.search);
     const urlStreamId = params.get('streamId');
-    
+
     if (urlStreamId) {
       setStreamId(urlStreamId);
       setView('viewer');
@@ -28,28 +28,36 @@ function App() {
     setStreamId(null);
   };
 
+  // Check for embed mode
+  const params = new URLSearchParams(window.location.search);
+  const isEmbed = params.get('embed') === 'true';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>🎥 WebRTC Stream Viewer</h1>
-        {view === 'viewer' && (
-          <button onClick={handleBackToList} className="back-button">
-            ← Back to Streams
-          </button>
-        )}
-      </header>
-      
+    <div className={`App ${isEmbed ? 'embed-mode' : ''}`}>
+      {!isEmbed && (
+        <header className="App-header">
+          <h1>🎥 WebRTC Stream Viewer</h1>
+          {view === 'viewer' && (
+            <button onClick={handleBackToList} className="back-button">
+              ← Back to Streams
+            </button>
+          )}
+        </header>
+      )}
+
       <main className="App-main">
         {view === 'list' ? (
           <StreamList onSelectStream={handleSelectStream} />
         ) : (
-          <StreamViewer streamId={streamId} />
+          <StreamViewer streamId={streamId} isEmbed={isEmbed} />
         )}
       </main>
-      
-      <footer className="App-footer">
-        <p>WebRTC Streaming with GStreamer Android</p>
-      </footer>
+
+      {!isEmbed && (
+        <footer className="App-footer">
+          <p>WebRTC Streaming with GStreamer Android</p>
+        </footer>
+      )}
     </div>
   );
 }
