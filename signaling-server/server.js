@@ -28,10 +28,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     activeClients: clients.size,
-    activeStreams: streams.size 
+    activeStreams: streams.size
   });
 });
 
@@ -49,7 +49,7 @@ app.get('/api/streams', (req, res) => {
 wss.on('connection', (ws) => {
   const clientId = uuidv4();
   console.log(`New client connected: ${clientId}`);
-  
+
   clients.set(clientId, {
     id: clientId,
     ws: ws,
@@ -76,9 +76,9 @@ wss.on('connection', (ws) => {
   });
 
   // Send welcome message with client ID
-  ws.send(JSON.stringify({ 
-    type: 'connected', 
-    clientId: clientId 
+  ws.send(JSON.stringify({
+    type: 'connected',
+    clientId: clientId
   }));
 });
 
@@ -92,27 +92,27 @@ function handleMessage(clientId, data) {
     case 'register-streamer':
       handleRegisterStreamer(clientId, data);
       break;
-    
+
     case 'register-viewer':
       handleRegisterViewer(clientId, data);
       break;
-    
+
     case 'offer':
       handleOffer(clientId, data);
       break;
-    
+
     case 'answer':
       handleAnswer(clientId, data);
       break;
-    
+
     case 'ice-candidate':
       handleIceCandidate(clientId, data);
       break;
-    
+
     case 'stop-stream':
       handleStopStream(clientId);
       break;
-    
+
     default:
       console.log(`Unknown message type: ${data.type}`);
   }
@@ -121,31 +121,41 @@ function handleMessage(clientId, data) {
 function handleRegisterStreamer(clientId, data) {
   const client = clients.get(clientId);
   const streamId = data.streamId || uuidv4();
-  
+
+  // Check if streamId is already in use by another ACTIVE streamer
+  if (streams.has(streamId)) {
+    console.log(`Registration failed: Stream ID '${streamId}' is already in use.`);
+    client.ws.send(JSON.stringify({
+      type: 'error',
+      message: `Stream ID '${streamId}' is already in use. Please choose another name.`
+    }));
+    return;
+  }
+
   client.type = 'streamer';
   client.streamId = streamId;
-  
+
   streams.set(streamId, {
     id: streamId,
     streamerId: clientId,
     createdAt: new Date().toISOString(),
     viewers: new Set()
   });
-  
+
   console.log(`Streamer registered: ${clientId}, stream: ${streamId}`);
-  
+
   client.ws.send(JSON.stringify({
     type: 'registered',
     role: 'streamer',
     streamId: streamId,
-    embedUrl: `${getBaseUrl()}/viewer.html?streamId=${streamId}`
+    embedUrl: `${getBaseUrl()}?streamId=${streamId}`
   }));
 }
 
 function handleRegisterViewer(clientId, data) {
   const client = clients.get(clientId);
   const streamId = data.streamId;
-  
+
   if (!streamId || !streams.has(streamId)) {
     client.ws.send(JSON.stringify({
       type: 'error',
@@ -153,21 +163,21 @@ function handleRegisterViewer(clientId, data) {
     }));
     return;
   }
-  
+
   client.type = 'viewer';
   client.streamId = streamId;
-  
+
   const stream = streams.get(streamId);
   stream.viewers.add(clientId);
-  
+
   console.log(`Viewer registered: ${clientId}, stream: ${streamId}`);
-  
+
   client.ws.send(JSON.stringify({
     type: 'registered',
     role: 'viewer',
     streamId: streamId
   }));
-  
+
   // Notify streamer about new viewer
   const streamer = clients.get(stream.streamerId);
   if (streamer && streamer.ws.readyState === WebSocket.OPEN) {
@@ -181,7 +191,7 @@ function handleRegisterViewer(clientId, data) {
 function handleOffer(clientId, data) {
   const targetId = data.targetId;
   const target = clients.get(targetId);
-  
+
   if (target && target.ws.readyState === WebSocket.OPEN) {
     target.ws.send(JSON.stringify({
       type: 'offer',
@@ -194,7 +204,7 @@ function handleOffer(clientId, data) {
 function handleAnswer(clientId, data) {
   const targetId = data.targetId;
   const target = clients.get(targetId);
-  
+
   if (target && target.ws.readyState === WebSocket.OPEN) {
     target.ws.send(JSON.stringify({
       type: 'answer',
@@ -207,7 +217,7 @@ function handleAnswer(clientId, data) {
 function handleIceCandidate(clientId, data) {
   const targetId = data.targetId;
   const target = clients.get(targetId);
-  
+
   if (target && target.ws.readyState === WebSocket.OPEN) {
     target.ws.send(JSON.stringify({
       type: 'ice-candidate',
@@ -220,10 +230,10 @@ function handleIceCandidate(clientId, data) {
 function handleStopStream(clientId) {
   const client = clients.get(clientId);
   if (!client || !client.streamId) return;
-  
+
   const stream = streams.get(client.streamId);
   if (!stream) return;
-  
+
   // Notify all viewers
   stream.viewers.forEach(viewerId => {
     const viewer = clients.get(viewerId);
@@ -233,7 +243,7 @@ function handleStopStream(clientId) {
       }));
     }
   });
-  
+
   streams.delete(client.streamId);
   console.log(`Stream ended: ${client.streamId}`);
 }
@@ -241,16 +251,16 @@ function handleStopStream(clientId) {
 function handleDisconnect(clientId) {
   const client = clients.get(clientId);
   if (!client) return;
-  
+
   console.log(`Client disconnected: ${clientId}`);
-  
+
   if (client.type === 'streamer' && client.streamId) {
     handleStopStream(clientId);
   } else if (client.type === 'viewer' && client.streamId) {
     const stream = streams.get(client.streamId);
     if (stream) {
       stream.viewers.delete(clientId);
-      
+
       // Notify streamer
       const streamer = clients.get(stream.streamerId);
       if (streamer && streamer.ws.readyState === WebSocket.OPEN) {
@@ -261,7 +271,7 @@ function handleDisconnect(clientId) {
       }
     }
   }
-  
+
   clients.delete(clientId);
 }
 
