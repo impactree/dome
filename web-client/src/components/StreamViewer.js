@@ -112,16 +112,10 @@ const StreamViewer = ({ streamId }) => {
       pcRef.current = new RTCPeerConnection({
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
           {
-            urls: 'turn:openrelay.metered.ca:80',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
-          },
-          {
-            urls: 'turn:openrelay.metered.ca:443',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
+            urls: 'turn:20.244.29.48:3478',
+            username: 'dome',
+            credential: 'domepass123'
           }
         ]
       });

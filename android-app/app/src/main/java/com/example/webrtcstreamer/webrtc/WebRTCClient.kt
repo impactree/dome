@@ -129,14 +129,9 @@ class WebRTCClient(
         val rtcConfig = PeerConnection.RTCConfiguration(
             listOf(
                 PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
-                PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer(),
-                PeerConnection.IceServer.builder("turn:openrelay.metered.ca:80")
-                    .setUsername("openrelayproject")
-                    .setPassword("openrelayproject")
-                    .createIceServer(),
-                PeerConnection.IceServer.builder("turn:openrelay.metered.ca:443")
-                    .setUsername("openrelayproject")
-                    .setPassword("openrelayproject")
+                PeerConnection.IceServer.builder("turn:20.244.29.48:3478")
+                    .setUsername("dome")
+                    .setPassword("domepass123")
                     .createIceServer()
             )
         ).apply {
@@ -145,6 +140,7 @@ class WebRTCClient(
             tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED
             continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
             keyType = PeerConnection.KeyType.ECDSA
+            sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN
         }
         
         peerConnection = peerConnectionFactory.createPeerConnection(
