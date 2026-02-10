@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebRTC Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        video {
+            width: 640px;
+            height: 480px;
+            background: black;
+            border: 2px solid #667eea;
+            margin: 20px 0;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        #status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: #16213e;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .info { color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>🎥 WebRTC Video Test</h1>
+    <p>This page tests if your browser can display WebRTC video streams.</p>
+    
+    <div id="status">Status: Ready</div>
+    
+    <h2>Test 1: Local Camera (Your PC)</h2>
+    <button onclick="testLocalCamera()">📹 Test Local Camera</button>
+    <video id="localVideo" autoplay playsinline muted></video>
+    
+    <h2>Test 2: Receive Remote Stream</h2>
+    <button onclick="testRemoteStream()">🌐 Connect to Android Stream</button>
+    <button onclick="manualPlay()">▶️ Manual Play</button>
+    <video id="remoteVideo" playsinline controls></video>
+    
+    <h2>Debug Info</h2>
+    <pre id="debug"></pre>
+
+    <script>
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const statusDiv = document.getElementById('status');
+        const debugDiv = document.getElementById('debug');
+        
+        let ws = null;
+        let pc = null;
+        let clientId = null;
+        
+        function log(msg, type = 'info') {
+            console.log(msg);
+            debugDiv.textContent += new Date().toLocaleTimeString() + ' - ' + msg + '\n';
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+            
+            if (type === 'error') {
+                statusDiv.innerHTML = '<span class="error">❌ ' + msg + '</span>';
+            } else if (type === 'success') {
+                statusDiv.innerHTML = '<span class="success">✅ ' + msg + '</span>';
+            } else {
+                statusDiv.innerHTML = '<span class="info">ℹ️ ' + msg + '</span>';
+            }
+        }
+        
+        async function testLocalCamera() {
+            try {
+                log('Requesting camera access...');
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: true 
+                });
+                
+                localVideo.srcObject = stream;
+                await localVideo.play();
+                log('Local camera working! ✅', 'success');
+            } catch (error) {
+                log('Local camera failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function testRemoteStream() {
+            try {
+                log('Connecting to signaling server...');
+                
+                ws = new WebSocket('ws://192.168.1.35:3000');
+                
+                ws.onopen = () => {
+                    log('WebSocket connected!', 'success');
+                };
+                
+                ws.onmessage = async (event) => {
+                    const msg = JSON.parse(event.data);
+                    log('Received: ' + msg.type);
+                    
+                    switch (msg.type) {
+                        case 'connected':
+                            clientId = msg.clientId;
+                            log('Client ID: ' + clientId);
+                            // Get stream ID from prompt or URL
+                            const streamId = prompt('Enter Stream ID (from Android app):');
+                            if (streamId) {
+                                ws.send(JSON.stringify({
+                                    type: 'register-viewer',
+                                    streamId: streamId
+                                }));
+                            }
+                            break;
+                            
+                        case 'registered':
+                            log('Registered as viewer', 'success');
+                            break;
+                            
+                        case 'offer':
+                            await handleOffer(msg.offer, msg.senderId);
+                            break;
+                            
+                        case 'ice-candidate':
+                            if (msg.candidate && pc) {
+                                await pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
+                                log('Added ICE candidate');
+                            }
+                            break;
+                            
+                        case 'stream-ended':
+                            log('Stream ended', 'error');
+                            break;
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    log('WebSocket error', 'error');
+                };
+                
+            } catch (error) {
+                log('Connection failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function handleOffer(offer, senderId) {
+            try {
+                log('Creating peer connection...');
+                
+                pc = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' }
+                    ]
+                });
+                
+                pc.ontrack = (event) => {
+                    log('Track received: ' + event.track.kind + ' (state: ' + event.track.readyState + ')', 'success');
+                    
+                    if (remoteVideo.srcObject !== event.streams[0]) {
+                        const stream = event.streams[0];
+                        remoteVideo.srcObject = stream;
+                        log('Stream assigned to video element');
+                        log('Stream has ' + stream.getTracks().length + ' tracks');
+                        
+                        // Log video element state
+                        remoteVideo.onloadedmetadata = () => {
+                            log('Video metadata loaded! Size: ' + remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight, 'success');
+                            log('Video readyState: ' + remoteVideo.readyState);
+                            
+                            // Check track states
+                            const tracks = stream.getTracks();
+                            tracks.forEach(track => {
+                                log('Track ' + track.kind + ': enabled=' + track.enabled + ', muted=' + track.muted + ', readyState=' + track.readyState);
+                            });
+                        };
+                        
+                        remoteVideo.onloadeddata = () => {
+                            log('Video data loaded!', 'success');
+                        };
+                        
+                        remoteVideo.onplay = () => {
+                            log('Video started playing!', 'success');
+                        };
+                        
+                        remoteVideo.onerror = (e) => {
+                            log('Video error: ' + remoteVideo.error?.message, 'error');
+                        };
+                        
+                        // Force load and play
+                        remoteVideo.load();
+                        setTimeout(() => {
+                            remoteVideo.play()
+                                .then(() => log('Video playing!', 'success'))
+                                .catch(e => log('Play failed: ' + e.message + ' - Click Manual Play button', 'error'));
+                        }, 1000);
+                    }
+                };
+                
+                pc.onicecandidate = (event) => {
+                    if (event.candidate && ws) {
+                        ws.send(JSON.stringify({
+                            type: 'ice-candidate',
+                            candidate: event.candidate,
+                            targetId: senderId
+                        }));
+                    }
+                };
+                
+                pc.onconnectionstatechange = () => {
+                    log('Connection state: ' + pc.connectionState);
+                };
+                
+                await pc.setRemoteDescription(new RTCSessionDescription(offer));
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+                
+                ws.send(JSON.stringify({
+                    type: 'answer',
+                    answer: answer,
+                    targetId: senderId
+                }));
+                
+                log('Answer sent');
+                
+            } catch (error) {
+                log('Offer handling failed: ' + error.message, 'error');
+            }
+        }
+        
+        function manualPlay() {
+            if (remoteVideo.srcObject) {
+                remoteVideo.play()
+                    .then(() => log('Manual play successful!', 'success'))
+                    .catch(e => log('Manual play failed: ' + e.message, 'error'));
+            } else {
+                log('No stream to play', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
