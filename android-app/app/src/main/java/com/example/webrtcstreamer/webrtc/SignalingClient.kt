@@ -20,6 +20,10 @@ class SignalingClient(
     private var clientId: String? = null
     private var streamId: String? = null
     
+    fun setStreamId(id: String) {
+        this.streamId = id
+    }
+    
     interface Listener {
         fun onConnected(clientId: String)
         fun onStreamRegistered(streamId: String, embedUrl: String)
@@ -124,8 +128,10 @@ class SignalingClient(
     private fun registerAsStreamer() {
         val message = JsonObject().apply {
             addProperty("type", "register-streamer")
-            // Use a fixed ID so the embed URL doesn't change
-            addProperty("streamId", "dome-camera")
+            // Use the streamId provided by the user (or default)
+            if (this@SignalingClient.streamId != null) {
+                addProperty("streamId", this@SignalingClient.streamId)
+            }
         }
         send(message.toString())
     }

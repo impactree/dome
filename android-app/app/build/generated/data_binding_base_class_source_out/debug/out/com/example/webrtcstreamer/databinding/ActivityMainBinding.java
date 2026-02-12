@@ -49,6 +49,12 @@ public final class ActivityMainBinding implements ViewBinding {
   public final TextView statusText;
 
   @NonNull
+  public final TextInputEditText streamIdInput;
+
+  @NonNull
+  public final TextInputLayout streamIdLayout;
+
+  @NonNull
   public final TextView streamIdText;
 
   @NonNull
@@ -61,8 +67,9 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull TextView embedUrlText, @NonNull CardView infoCard,
       @NonNull SurfaceViewRenderer localView, @NonNull TextInputEditText serverUrlInput,
       @NonNull TextInputLayout serverUrlLayout, @NonNull MaterialButton startButton,
-      @NonNull TextView statusText, @NonNull TextView streamIdText, @NonNull TextView titleText,
-      @NonNull CardView videoCard) {
+      @NonNull TextView statusText, @NonNull TextInputEditText streamIdInput,
+      @NonNull TextInputLayout streamIdLayout, @NonNull TextView streamIdText,
+      @NonNull TextView titleText, @NonNull CardView videoCard) {
     this.rootView = rootView;
     this.copyUrlButton = copyUrlButton;
     this.embedUrlText = embedUrlText;
@@ -72,6 +79,8 @@ public final class ActivityMainBinding implements ViewBinding {
     this.serverUrlLayout = serverUrlLayout;
     this.startButton = startButton;
     this.statusText = statusText;
+    this.streamIdInput = streamIdInput;
+    this.streamIdLayout = streamIdLayout;
     this.streamIdText = streamIdText;
     this.titleText = titleText;
     this.videoCard = videoCard;
@@ -152,6 +161,18 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.streamIdInput;
+      TextInputEditText streamIdInput = ViewBindings.findChildViewById(rootView, id);
+      if (streamIdInput == null) {
+        break missingId;
+      }
+
+      id = R.id.streamIdLayout;
+      TextInputLayout streamIdLayout = ViewBindings.findChildViewById(rootView, id);
+      if (streamIdLayout == null) {
+        break missingId;
+      }
+
       id = R.id.streamIdText;
       TextView streamIdText = ViewBindings.findChildViewById(rootView, id);
       if (streamIdText == null) {
@@ -171,8 +192,8 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((ScrollView) rootView, copyUrlButton, embedUrlText, infoCard,
-          localView, serverUrlInput, serverUrlLayout, startButton, statusText, streamIdText,
-          titleText, videoCard);
+          localView, serverUrlInput, serverUrlLayout, startButton, statusText, streamIdInput,
+          streamIdLayout, streamIdText, titleText, videoCard);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

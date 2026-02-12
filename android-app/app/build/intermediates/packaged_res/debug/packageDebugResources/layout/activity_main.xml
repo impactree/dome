@@ -73,10 +73,32 @@
                 android:id="@+id/serverUrlInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ws://192.168.137.1:3000"
+                android:text="ws://20.244.29.48:3000"
                 android:hint="ws://your-server-url:3000"
                 android:textColor="@android:color/white"
                 android:inputType="textUri" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Stream ID Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/streamIdLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Camera ID (e.g. cam1)"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/serverUrlLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/streamIdInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="dome-camera"
+                android:textColor="@android:color/white"
+                android:inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

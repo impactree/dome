@@ -8,6 +8,8 @@ id serverUrlInput
 id serverUrlLayout
 id startButton
 id statusText
+id streamIdInput
+id streamIdLayout
 id streamIdText
 id titleText
 id videoCard

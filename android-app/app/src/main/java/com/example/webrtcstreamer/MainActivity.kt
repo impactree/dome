@@ -137,6 +137,12 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     updateStatus("Error: $error")
                     Toast.makeText(this@MainActivity, error, Toast.LENGTH_SHORT).show()
+                    
+                    // Reset streaming state on error (e.g., ID already taken)
+                    isStreaming = false
+                    binding.startButton.text = "Start Streaming"
+                    binding.serverUrlInput.isEnabled = true
+                    binding.streamIdInput.isEnabled = true
                 }
             }
         })
@@ -157,7 +163,17 @@ class MainActivity : AppCompatActivity() {
                 // AUTO-START: Start streaming immediately after camera is ready
                 if (!isStreaming) {
                     println("DEBUG: Auto-starting stream...")
-                    startStreaming()
+                    val prefs = getSharedPreferences("start_settings", MODE_PRIVATE)
+                    val serverUrl = prefs.getString("server_url", "ws://20.244.29.48:3000") ?: "ws://20.244.29.48:3000"
+                    
+                    // Random ID if none exists
+                    var streamId = prefs.getString("stream_id", null)
+                    if (streamId == null) {
+                        streamId = "cam-${(1000..9999).random()}"
+                        prefs.edit().putString("stream_id", streamId).apply()
+                    }
+                    
+                    startStreaming(serverUrl, streamId)
                 }
             } catch (e: Exception) {
                 println("ERROR: Failed to start camera: ${e.message}")
@@ -181,9 +197,42 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun setupUI() {
+        // Load settings
+        val prefs = getSharedPreferences("start_settings", MODE_PRIVATE)
+        
+        // Default Server URL
+        val savedServerUrl = prefs.getString("server_url", "ws://20.244.29.48:3000")
+        binding.serverUrlInput.setText(savedServerUrl)
+
+        // Generate a random unique ID for first-time use
+        var savedStreamId = prefs.getString("stream_id", null)
+        if (savedStreamId == null) {
+            val randomNum = (1000..9999).random()
+            savedStreamId = "cam-$randomNum"
+            prefs.edit().putString("stream_id", savedStreamId).apply()
+        }
+        binding.streamIdInput.setText(savedStreamId)
+
         binding.startButton.setOnClickListener {
             if (!isStreaming) {
-                startStreaming()
+                // Save settings
+                val serverUrl = binding.serverUrlInput.text.toString().trim()
+                val streamId = binding.streamIdInput.text.toString().trim()
+                
+                if (serverUrl.isEmpty()) {
+                    Toast.makeText(this, "Please enter Server URL", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                
+                if (streamId.isNotEmpty()) {
+                    prefs.edit()
+                        .putString("server_url", serverUrl)
+                        .putString("stream_id", streamId)
+                        .apply()
+                    startStreaming(serverUrl, streamId)
+                } else {
+                    Toast.makeText(this, "Please enter a Camera ID", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 stopStreaming()
             }
@@ -202,18 +251,15 @@ class MainActivity : AppCompatActivity() {
         updateStatus("Ready")
     }
     
-    private fun startStreaming() {
-        // Use hardcoded URL if input is empty, but input defaults to empty in layout usually.
-        // We updated the variable 'signalingServerUrl' above, but connect() takes an argument.
-        // Let's use the property we defined above.
-        val serverUrl = "ws://20.244.29.48:3000" 
-        
+    private fun startStreaming(serverUrl: String, streamId: String) {
         lifecycleScope.launch {
             try {
+                signalingClient.setStreamId(streamId)
                 signalingClient.connect(serverUrl)
                 isStreaming = true
                 binding.startButton.text = "Stop Streaming"
                 binding.serverUrlInput.isEnabled = false
+                binding.streamIdInput.isEnabled = false
             } catch (e: Exception) {
                 Toast.makeText(this@MainActivity, "Failed to connect: ${e.message}", Toast.LENGTH_SHORT).show()
             }
@@ -226,6 +272,7 @@ class MainActivity : AppCompatActivity() {
             isStreaming = false
             binding.startButton.text = "Start Streaming"
             binding.serverUrlInput.isEnabled = true
+            binding.streamIdInput.isEnabled = true
             binding.streamIdText.text = ""
             binding.embedUrlText.text = ""
             updateStatus("Ready")

@@ -3512,6 +3512,8 @@ id staticLayout
 id staticPostLayout
 id statusText
 id stop
+id streamIdInput
+id streamIdLayout
 id streamIdText
 id stretch
 id submenuarrow

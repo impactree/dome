@@ -1,0 +1,19 @@
+# Android
+android-app/app/build/
+android-app/.gradle/
+android-app/local.properties
+android-app/.idea/
+*.apk
+
+# Node
+node_modules/
+dist/
+build/
+.env
+
+# System
+.DS_Store
+Thumbs.db
+
+# Deployment
+dome_cloud_deploy/
