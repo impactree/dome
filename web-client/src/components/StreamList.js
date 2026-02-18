@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './StreamList.css';
 
-const API_URL = 'http://13.233.11.137:3000';
+// allow overriding the API URL using an environment variable for easier deployment
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000'; // override via REACT_APP_API_URL
 
 const StreamList = ({ onSelectStream }) => {
   const [streams, setStreams] = useState([]);

@@ -79,7 +79,8 @@ The project consists of 3 main components:
 
 ```
 dome_android/
-├── signaling-server/    # Node.js WebSocket server (Port 3000)
+├── signaling-server/    # Node.js WebSocket server (default Port 3000, configurable via PORT env)
+└── web-client/          # React viewer (development at 3001 by CRA, production build can run on any port)
 ├── web-client/          # React web application (Port 3001)
 └── android-app/         # Android streaming application
 ```
@@ -148,6 +149,7 @@ nano .env
 
 **Edit `.env`:**
 ```env
+# example (change 3004 if you're deploying to cloud instance)
 PORT=3000
 PUBLIC_URL=http://localhost:3000
 # For production, use your public domain:
@@ -161,7 +163,7 @@ PUBLIC_URL=http://localhost:3000
 npm start
 
 # You should see:
-# Signaling server running on port 3000
+# Signaling server running on port 3000 (use PORT=3004 for cloud deployment)
 # WebSocket endpoint: ws://localhost:3000
 # Health check: http://localhost:3000/api/health
 ```
@@ -206,8 +208,8 @@ nano .env
 
 **Edit `.env` (optional):**
 ```env
-REACT_APP_SIGNALING_SERVER=ws://localhost:3000
-REACT_APP_API_URL=http://localhost:3000
+REACT_APP_SIGNALING_SERVER=ws://localhost:3000  # set to ws://your.server.ip:3004 when deploying
+REACT_APP_API_URL=http://localhost:3000  # set to http://your.server.ip:3004
 ```
 
 #### Step 9: Start Web Client

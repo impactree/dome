@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './StreamViewer.css';
 
-const SIGNALING_SERVER = 'ws://13.233.11.137:3000';
+// signaling server address can be configured at build/run time via env variable
+const SIGNALING_SERVER = process.env.REACT_APP_SIGNALING_SERVER || 'ws://localhost:3000'; // override via REACT_APP_SIGNALING_SERVER
 
 const StreamViewer = ({ streamId, isEmbed }) => {
   const videoRef = useRef(null);
@@ -113,7 +114,7 @@ const StreamViewer = ({ streamId, isEmbed }) => {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
           {
-            urls: 'turn:13.233.11.137:3478',
+            urls: process.env.REACT_APP_TURN_URL || 'turn:localhost:3478',
             username: 'dome',
             credential: 'domepass123'
           }

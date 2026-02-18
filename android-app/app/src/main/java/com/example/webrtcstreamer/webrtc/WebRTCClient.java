@@ -159,7 +159,7 @@ public class WebRTCClient {
     public PeerConnection createPeerConnection() {
         List<PeerConnection.IceServer> iceServers = new ArrayList<>();
         iceServers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
-        iceServers.add(PeerConnection.IceServer.builder("turn:13.233.11.137:3478")
+        iceServers.add(PeerConnection.IceServer.builder("turn:13.234.129.181:3478")
                 .setUsername("dome")
                 .setPassword("domepass123")
                 .createIceServer());

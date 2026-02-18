@@ -60,15 +60,17 @@ Android application for streaming video using WebRTC with GStreamer support.
 
 ### 2. Configure Signaling Server URL
 
-In [MainActivity.kt](app/src/main/java/com/example/webrtcstreamer/MainActivity.kt), update the signaling server URL:
+In [MainActivity.kt](app/src/main/java/com/example/webrtcstreamer/MainActivity.kt), update the signaling server URL (default is shown in the app UI):
 
 ```kotlin
-val signalingServerUrl = "ws://YOUR_SERVER_IP:3000"
+val signalingServerUrl = "ws://YOUR_SERVER_IP:3004"  // use 3004 when running deploy.sh
 ```
 
 **Important**: 
-- For Android emulator: Use `ws://10.0.2.2:3000` (localhost)
-- For physical device: Use your computer's IP address or public server URL
+- For Android emulator: Use `ws://10.0.2.2:3004` (localhost)
+- For physical device: Use your server’s IP (e.g. `ws://13.234.129.181:3004`) or a domain name
+
+Also adjust the TURN server address in `WebRTCClient.java` if it differs from the example (`turn:13.234.129.181:3478`).
 
 ### 3. Build and Run
 

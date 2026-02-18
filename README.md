@@ -21,26 +21,38 @@ dome_android/
 ```
 
 ## 🚀 Quick Start
-
+You can also use the provided `deploy.sh` script for unattended installation on a fresh Ubuntu VM; it installs Node.js, clones the repo, and uses PM2 to run both services on ports 3004 and 3005.
 ### 1. Start the Signaling Server
 
 ```bash
 cd signaling-server
 npm install
-npm start
+
+# set PORT (3004 in your cloud example) and PUBLIC_URL before starting
+PORT=3004 PUBLIC_URL=http://13.234.129.181:3004 npm start
 ```
 
-Server will run on http://localhost:3000
+> **Tip:** copy `.env.example` to `.env` and edit the variables instead of exporting each time.
+
+Server will run on `http://localhost:3004` (or `http://13.234.129.181:3004` from other machines)
 
 ### 2. Start the Web Client
 
 ```bash
 cd web-client
 npm install
+
+# development server listens on PORT (set 3005 as needed) and needs to know the
+# signaling server/search API endpoints
+PORT=3005 \
+REACT_APP_API_URL=http://13.234.129.181:3004 \
+REACT_APP_SIGNALING_SERVER=ws://13.234.129.181:3004 \
 npm start
 ```
 
-Web client will open at http://localhost:3001
+> **Tip:** copy `web-client/.env.example` to `web-client/.env` and edit values.
+
+The React app will be available at `http://localhost:3005` (or `http://13.234.129.181:3005` remotely).
 
 ### 3. Build Android App
 

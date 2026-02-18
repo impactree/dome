@@ -117,8 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!isStreaming) {
                     Log.d("MainActivity", "Auto-starting stream...");
                     SharedPreferences prefs = getSharedPreferences("start_settings", MODE_PRIVATE);
-                    String serverUrl = prefs.getString("server_url", "ws://13.233.11.137:3000");
-                    if (serverUrl == null) serverUrl = "ws://13.233.11.137:3000";
+                    // default URL should point to your deployment; change as needed or via settings
+                    String serverUrl = prefs.getString("server_url", "ws://13.234.129.181:3004");
+                    if (serverUrl == null) serverUrl = "ws://13.234.129.181:3004";
 
                     String streamId = prefs.getString("stream_id", null);
                     if (streamId == null) {
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUI() {
         SharedPreferences prefs = getSharedPreferences("start_settings", MODE_PRIVATE);
-        String savedServerUrl = prefs.getString("server_url", "ws://13.233.11.137:3000");
+        String savedServerUrl = prefs.getString("server_url", "ws://13.234.129.181:3004");
         binding.serverUrlInput.setText(savedServerUrl);
 
         String savedStreamId = prefs.getString("stream_id", null);
