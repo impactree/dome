@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.webrtcstreamer.app-mergeDebugResources-37:/values-v16/values-v16.xml",
+            "outputFile": "com.dome.streamer.app-mergeDebugResources-37:/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\britt\\.gradle\\caches\\transforms-4\\9fca2ca22b974e20522c5c33984aac76\\transformed\\core-1.12.0\\res\\values-v16\\values-v16.xml",
+                    "source": "/home/codespace/.gradle/caches/transforms-4/9fca2ca22b974e20522c5c33984aac76/transformed/core-1.12.0/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\britt\\.gradle\\caches\\transforms-4\\eed39ac212544363199169d0f8513040\\transformed\\appcompat-1.6.1\\res\\values-v16\\values-v16.xml",
+                    "source": "/home/codespace/.gradle/caches/transforms-4/eed39ac212544363199169d0f8513040/transformed/appcompat-1.6.1/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

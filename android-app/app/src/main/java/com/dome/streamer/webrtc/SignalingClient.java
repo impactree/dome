@@ -1,4 +1,4 @@
-package com.example.webrtcstreamer.webrtc;
+package com.dome.streamer.webrtc;
 
 import android.util.Log;
 

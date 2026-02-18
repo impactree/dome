@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.webrtcstreamer.app-mergeDebugResources-37:/values-watch-v21/values-watch-v21.xml",
+            "outputFile": "com.dome.streamer.app-mergeDebugResources-37:/values-watch-v21/values-watch-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\britt\\.gradle\\caches\\transforms-4\\eed39ac212544363199169d0f8513040\\transformed\\appcompat-1.6.1\\res\\values-watch-v21\\values-watch-v21.xml",
+                    "source": "/home/codespace/.gradle/caches/transforms-4/eed39ac212544363199169d0f8513040/transformed/appcompat-1.6.1/res/values-watch-v21/values-watch-v21.xml",
                     "from": {
                         "startLines": "2,6,10",
                         "startColumns": "4,4,4",

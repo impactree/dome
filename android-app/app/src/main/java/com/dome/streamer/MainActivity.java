@@ -1,4 +1,4 @@
-package com.example.webrtcstreamer;
+package com.dome.streamer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,9 +15,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.webrtcstreamer.databinding.ActivityMainBinding;
-import com.example.webrtcstreamer.webrtc.SignalingClient;
-import com.example.webrtcstreamer.webrtc.WebRTCClient;
+import com.dome.streamer.databinding.ActivityMainBinding;
+import com.dome.streamer.webrtc.SignalingClient;
+import com.dome.streamer.webrtc.WebRTCClient;
 
 import java.util.Random;
 

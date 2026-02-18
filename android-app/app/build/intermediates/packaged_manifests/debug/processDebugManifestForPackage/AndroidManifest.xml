@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.webrtcstreamer"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    package="com.dome.streamer"
+    android:versionCode="2"
+    android:versionName="2.0" >
 
     <uses-sdk
         android:minSdkVersion="24"
@@ -19,10 +19,10 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <permission
-        android:name="com.example.webrtcstreamer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:name="com.dome.streamer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.example.webrtcstreamer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+    <uses-permission android:name="com.dome.streamer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
         android:allowBackup="true"
@@ -36,7 +36,7 @@
         android:theme="@style/Theme.WebRTCStreamer"
         android:usesCleartextTraffic="true" >
         <activity
-            android:name="com.example.webrtcstreamer.MainActivity"
+            android:name="com.dome.streamer.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -57,7 +57,7 @@
 
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.example.webrtcstreamer.androidx-startup"
+            android:authorities="com.dome.streamer.androidx-startup"
             android:exported="false" >
             <meta-data
                 android:name="androidx.emoji2.text.EmojiCompatInitializer"
