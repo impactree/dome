@@ -29,12 +29,12 @@ cd signaling-server
 npm install
 
 # set PORT (3004 in your cloud example) and PUBLIC_URL before starting
-PORT=3004 PUBLIC_URL=http://13.234.129.181:3004 npm start
+PORT=3004 PUBLIC_URL=http://20.244.82.40:3004 npm start
 ```
 
 > **Tip:** copy `.env.example` to `.env` and edit the variables instead of exporting each time.
 
-Server will run on `http://localhost:3004` (or `http://13.234.129.181:3004` from other machines)
+Server will run on `http://localhost:3004` (or `http://20.244.82.40:3004` from other machines)
 
 ### 2. Start the Web Client
 
@@ -45,14 +45,15 @@ npm install
 # development server listens on PORT (set 3005 as needed) and needs to know the
 # signaling server/search API endpoints
 PORT=3005 \
-REACT_APP_API_URL=http://13.234.129.181:3004 \
-REACT_APP_SIGNALING_SERVER=ws://13.234.129.181:3004 \
+REACT_APP_API_URL=http://20.244.82.40:3004 \
+REACT_APP_SIGNALING_SERVER=ws://20.244.82.40:3004 \
+
 npm start
 ```
 
 > **Tip:** copy `web-client/.env.example` to `web-client/.env` and edit values.
 
-The React app will be available at `http://localhost:3005` (or `http://13.234.129.181:3005` remotely).
+The React app will be available at `http://localhost:3005` (or `http://20.244.82.40:3005` remotely).
 
 ### 3. Build Android App
 

@@ -68,9 +68,9 @@ val signalingServerUrl = "ws://YOUR_SERVER_IP:3004"  // use 3004 when running de
 
 **Important**: 
 - For Android emulator: Use `ws://10.0.2.2:3004` (localhost)
-- For physical device: Use your server’s IP (e.g. `ws://13.234.129.181:3004`) or a domain name
+- For physical device: Use your server’s IP (e.g. `ws://20.244.82.40:3004`) or a domain name
 
-Also adjust the TURN server address in `WebRTCClient.java` if it differs from the example (`turn:13.234.129.181:3478`).
+Also adjust the TURN server address in `WebRTCClient.java` if it differs from the example (`turn:20.244.82.40:3478`).
 
 ### 3. Build and Run
 

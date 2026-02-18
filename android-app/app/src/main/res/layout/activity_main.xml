@@ -73,7 +73,7 @@
                 android:id="@+id/serverUrlInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ws://13.234.129.181:3004"
+                android:text="ws://20.244.82.40:3004"
                 android:hint="ws://your-server-url:3004"
                 android:textColor="@android:color/white"
                 android:inputType="textUri" />
